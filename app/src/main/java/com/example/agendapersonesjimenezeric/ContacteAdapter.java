@@ -12,6 +12,7 @@ import java.util.List;
 
 public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.ContacteViewHolder> {
     private List<Contacte> llistaContactes;
+    private int posicioSeleccionada = RecyclerView.NO_POSITION;
 
     public ContacteAdapter(List<Contacte> llistaContactes) {
         this.llistaContactes = llistaContactes;
@@ -48,5 +49,12 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
             txtTelefon = itemView.findViewById(R.id.txt_telefon);
             txtEmail = itemView.findViewById(R.id.txt_email);
         }
+    }
+    public void setPosicioSeleccionada(int position) {
+        posicioSeleccionada = position;
+    }
+
+    public int getPosicioSeleccionada() {
+        return posicioSeleccionada;
     }
 }

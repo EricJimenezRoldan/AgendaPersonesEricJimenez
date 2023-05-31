@@ -1,6 +1,8 @@
 package com.example.agendapersonesjimenezeric;
 
-public class Contacte {
+import java.io.Serializable;
+
+public class Contacte implements Serializable {
     private String nom;
     private String telefon;
     private String email;
