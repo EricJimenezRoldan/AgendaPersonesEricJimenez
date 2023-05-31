@@ -1,12 +1,15 @@
 package com.example.agendapersonesjimenezeric;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +38,18 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ContacteAdapter(llistaContactes);
         recyclerView.setAdapter(adapter);
 
+        // Configurar listener de clic en el adaptador
+        adapter.setOnItemClickListener(new ContacteAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+            }
+        });
+
+        // Configurar separadores entre los elementos de la lista
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
         Button btnAfegirContacte = findViewById(R.id.btn_afegir_contacte);
         btnAfegirContacte.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,12 +64,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int posicioSeleccionada = adapter.getPosicioSeleccionada();
                 if (posicioSeleccionada != RecyclerView.NO_POSITION) {
-                    esborrarContacte(posicioSeleccionada);
+                    mostrarConfirmacionBorrado(posicioSeleccionada);
                 } else {
                     Toast.makeText(MainActivity.this, "Selecciona un contacte a esborrar", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
 
         Button btnEditarContacte = findViewById(R.id.btn_editar_contacte);
         btnEditarContacte.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +85,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void mostrarConfirmacionBorrado(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Estàs segur de que vols eliminar aquest contacte?")
+                .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        esborrarContacte(position);
+                        Toast.makeText(MainActivity.this, "Contacte esborrat", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
     private List<Contacte> llegirContactesDesdeArxiu() {
         List<Contacte> contactes = new ArrayList<>();

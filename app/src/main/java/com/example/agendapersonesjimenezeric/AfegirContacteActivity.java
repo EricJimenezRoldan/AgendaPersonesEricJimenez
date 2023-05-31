@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,17 +24,21 @@ public class AfegirContacteActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nom = editNom.getText().toString();
-                String telefon = editTelefon.getText().toString();
-                String email = editEmail.getText().toString();
+                String nom = editNom.getText().toString().trim();
+                String telefon = editTelefon.getText().toString().trim();
+                String email = editEmail.getText().toString().trim();
 
-                Contacte contacte = new Contacte(nom, telefon, email);
-
-                Intent intent = new Intent();
-                intent.putExtra("contacte", contacte);
-                setResult(RESULT_OK, intent);
-                finish();
+                if (nom.isEmpty() || telefon.isEmpty() || email.isEmpty()) {
+                    Toast.makeText(AfegirContacteActivity.this, "Completa tots els camps", Toast.LENGTH_SHORT).show();
+                } else {
+                    Contacte contacte = new Contacte(nom, telefon, email);
+                    Intent intent = new Intent();
+                    intent.putExtra("contacte", contacte);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
             }
         });
+
     }
 }

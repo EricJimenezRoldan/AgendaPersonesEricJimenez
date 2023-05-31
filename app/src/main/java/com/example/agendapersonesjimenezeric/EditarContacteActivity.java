@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,13 +39,17 @@ public class EditarContacteActivity extends AppCompatActivity {
                 String telefon = editTelefon.getText().toString();
                 String email = editEmail.getText().toString();
 
-                Contacte contacteActualitzat = new Contacte(nom, telefon, email);
-
-                Intent intent = new Intent();
-                intent.putExtra("position", position);
-                intent.putExtra("contacte", contacteActualitzat);
-                setResult(RESULT_OK, intent);
-                finish();
+                if (nom.isEmpty() || telefon.isEmpty() || email.isEmpty()) {
+                    Toast.makeText(EditarContacteActivity.this, "Completa tots els camps", Toast.LENGTH_SHORT).show();
+                } else {
+                    int position = getIntent().getIntExtra("position", -1);
+                    Contacte contacte = new Contacte(nom, telefon, email);
+                    Intent intent = new Intent();
+                    intent.putExtra("position", position);
+                    intent.putExtra("contacte", contacte);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
             }
         });
     }
