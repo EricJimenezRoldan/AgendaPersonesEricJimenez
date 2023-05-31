@@ -56,6 +56,8 @@ public class AfegirContacteActivity extends AppCompatActivity {
 
                 if (nom.isEmpty() || telefon.isEmpty() || email.isEmpty()) {
                     Toast.makeText(AfegirContacteActivity.this, "Completa tots els camps", Toast.LENGTH_SHORT).show();
+                } else if (!validarTelefono(telefon)) {
+                    Toast.makeText(AfegirContacteActivity.this, "El camp de telèfon no és correcte", Toast.LENGTH_SHORT).show();
                 } else {
                     Contacte contacte = new Contacte(nom, telefon, email);
                     contacte.setRutaFoto(rutaFoto);
@@ -67,6 +69,7 @@ public class AfegirContacteActivity extends AppCompatActivity {
             }
         });
 
+
         ImageButton btnCapturarFoto = findViewById(R.id.btnCapturarFoto);
         btnCapturarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +78,16 @@ public class AfegirContacteActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean validarTelefono(String telefono) {
+        try {
+            int numero = Integer.parseInt(telefono);
+            return numero > 0 && String.valueOf(numero).length() == 9;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 
     private void capturarFoto() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {

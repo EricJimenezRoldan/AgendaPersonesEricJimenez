@@ -71,7 +71,9 @@ public class EditarContacteActivity extends AppCompatActivity {
 
                 if (nom.isEmpty() || telefon.isEmpty() || email.isEmpty()) {
                     Toast.makeText(EditarContacteActivity.this, "Completa tots els camps", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (!validarTelefono(telefon)) {
+                    Toast.makeText(EditarContacteActivity.this, "El camp de telèfon no és correcte", Toast.LENGTH_SHORT).show();
+                }else {
                     Contacte contacteActualizado = new Contacte(nom, telefon, email);
                     contacteActualizado.setRutaFoto(rutaFotoActual);
                     Intent intent = new Intent();
@@ -91,6 +93,16 @@ public class EditarContacteActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean validarTelefono(String telefono) {
+        try {
+            int numero = Integer.parseInt(telefono);
+            return numero > 0 && String.valueOf(numero).length() == 9;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 
     private void capturarFoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
