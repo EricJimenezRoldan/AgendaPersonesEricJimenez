@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MainActivity extends AppCompatActivity {
     private List<Contacte> llistaContactes;
     private RecyclerView recyclerView;
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new ContacteAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
+                // Acciones al hacer clic en un contacto (opcional)
             }
         });
 
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         Button btnEditarContacte = findViewById(R.id.btn_editar_contacte);
         btnEditarContacte.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
     private List<Contacte> llegirContactesDesdeArxiu() {
         List<Contacte> contactes = new ArrayList<>();
 
@@ -117,11 +114,13 @@ public class MainActivity extends AppCompatActivity {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] datos = line.split(",");
-                if (datos.length == 3) {
+                if (datos.length == 4) { // Cambio aquí para incluir la ruta de la foto
                     String nom = datos[0];
                     String telefon = datos[1];
                     String email = datos[2];
+                    String rutaFoto = datos[3]; // Obtener la ruta de la foto
                     Contacte contacte = new Contacte(nom, telefon, email);
+                    contacte.setRutaFoto(rutaFoto); // Asignar la ruta de la foto al contacto
                     contactes.add(contacte);
                 }
             }
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream fileOutputStream = openFileOutput("contactes.txt", MODE_PRIVATE);
 
             for (Contacte contacte : llistaContactes) {
-                String linia = contacte.getNom() + "," + contacte.getTelefon() + "," + contacte.getEmail() + "\n";
+                String linia = contacte.getNom() + "," + contacte.getTelefon() + "," + contacte.getEmail() + "," + contacte.getRutaFoto() + "\n"; // Incluir la ruta de la foto
                 fileOutputStream.write(linia.getBytes());
             }
 
@@ -203,10 +202,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         guardarContactesEnArxiu();
     }
-
 }

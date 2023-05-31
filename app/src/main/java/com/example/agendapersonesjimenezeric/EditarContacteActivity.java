@@ -21,8 +21,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class EditarContacteActivity extends AppCompatActivity {
 
@@ -102,7 +106,6 @@ public class EditarContacteActivity extends AppCompatActivity {
         }
     }
 
-
     private File crearArchivoFoto() {
         String nombreArchivo = "foto_" + System.currentTimeMillis();
         File directorioAlmacenamiento = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -118,7 +121,6 @@ public class EditarContacteActivity extends AppCompatActivity {
         return archivoFoto;
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -133,7 +135,6 @@ public class EditarContacteActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 imageViewFoto.setImageBitmap(bitmap);
             }
         }
@@ -179,5 +180,47 @@ public class EditarContacteActivity extends AppCompatActivity {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        guardarRutaFotoEnArchivo();
+    }
+
+    private void guardarRutaFotoEnArchivo() {
+        try {
+            FileOutputStream fileOutputStream = openFileOutput("ruta_foto.txt", MODE_PRIVATE);
+            fileOutputStream.write(rutaFotoActual.getBytes());
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        rutaFotoActual = leerRutaFotoDesdeArchivo();
+        if (rutaFotoActual != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(rutaFotoActual);
+            imageViewFoto.setImageBitmap(bitmap);
+        }
+    }
+
+    private String leerRutaFotoDesdeArchivo() {
+        try {
+            FileInputStream fileInputStream = openFileInput("ruta_foto.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String rutaFoto = bufferedReader.readLine();
+
+            bufferedReader.close();
+            return rutaFoto;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
