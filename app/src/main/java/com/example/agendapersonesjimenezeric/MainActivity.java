@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity {
     private List<Contacte> llistaContactes;
     private RecyclerView recyclerView;
@@ -33,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
 
         llistaContactes = llegirContactesDesdeArxiu();
 
+        adapter = new ContacteAdapter(llistaContactes);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ContacteAdapter(llistaContactes);
         recyclerView.setAdapter(adapter);
 
         // Configurar listener de clic en el adaptador
@@ -202,4 +203,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        guardarContactesEnArxiu();
+    }
+
 }

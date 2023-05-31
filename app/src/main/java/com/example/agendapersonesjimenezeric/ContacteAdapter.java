@@ -2,6 +2,8 @@ package com.example.agendapersonesjimenezeric;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.ContacteViewHolder> {
@@ -61,9 +64,10 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
 
         if (contacte.getRutaFoto() != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(contacte.getRutaFoto());
-            holder.imageViewFoto.setImageBitmap(bitmap);
+            Bitmap rotatedBitmap = rotateImage(bitmap, 90); // Cambia el ángulo de rotación según tus necesidades
+            Bitmap resizedBitmap = resizeImage(rotatedBitmap, 200, 200); // Cambia los valores de ancho y alto según tus necesidades
+            holder.imageViewFoto.setImageBitmap(resizedBitmap);
         } else {
-            // Si no hay foto, puedes mostrar una imagen predeterminada o dejar el ImageView vacío
             holder.imageViewFoto.setImageResource(R.drawable.ic_foto_default);
         }
 
@@ -72,6 +76,22 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
         } else {
             holder.itemView.setBackgroundResource(R.drawable.contacte_background);
         }
+    }
+
+    private Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    private Bitmap resizeImage(Bitmap originalImage, int newWidth, int newHeight) {
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        return Bitmap.createBitmap(originalImage, 0, 0, width, height, matrix, false);
     }
 
     @Override
@@ -84,7 +104,6 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
         TextView txtTelefon;
         TextView txtEmail;
         ImageView imageViewFoto;
-
 
         ContacteViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,18 +125,5 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
                 }
             });
         }
-
-        public void onBindViewHolder(@NonNull ContacteViewHolder holder, int position) {
-            Contacte contacte = llistaContactes.get(position);
-
-            if (contacte.getRutaFoto() != null) {
-                Bitmap bitmap = BitmapFactory.decodeFile(contacte.getRutaFoto());
-                holder.imageViewFoto.setImageBitmap(bitmap);
-            } else {
-                // Si no hay foto, puedes mostrar una imagen predeterminada o dejar el ImageView vacío
-                holder.imageViewFoto.setImageResource(R.drawable.ic_foto_default);
-            }
-        }
-
     }
 }

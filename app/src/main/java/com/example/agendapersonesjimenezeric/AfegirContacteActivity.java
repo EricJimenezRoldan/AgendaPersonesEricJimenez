@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -110,10 +112,66 @@ public class AfegirContacteActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if (rutaFoto != null) {
                 Bitmap bitmap = BitmapFactory.decodeFile(rutaFoto);
+
+                // Rotar la imagen si es necesario
+                int orientation = getOrientation(rutaFoto);
+                if (orientation != 0) {
+                    bitmap = rotateImage(bitmap, orientation);
+                }
+
+                // Redimensionar la imagen para ajustarla al ImageView
+                bitmap = resizeImage(bitmap, imageViewFoto.getWidth(), imageViewFoto.getHeight());
+
                 imageViewFoto.setImageBitmap(bitmap);
             }
         }
     }
+
+    private Bitmap resizeImage(Bitmap bitmap, int targetWidth, int targetHeight) {
+        // Verificar si la imagen ya tiene un tamaño menor o igual al objetivo
+        if (bitmap.getWidth() <= targetWidth && bitmap.getHeight() <= targetHeight) {
+            return bitmap;
+        }
+
+        float scaleFactor = Math.min((float) targetWidth / bitmap.getWidth(), (float) targetHeight / bitmap.getHeight());
+        int resizedWidth = Math.round(bitmap.getWidth() * scaleFactor);
+        int resizedHeight = Math.round(bitmap.getHeight() * scaleFactor);
+
+        // Verificar si el tamaño redimensionado es válido
+        if (resizedWidth <= 0 || resizedHeight <= 0) {
+            return bitmap;
+        }
+
+        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, true);
+    }
+
+    private int getOrientation(String imagePath) {
+        try {
+            ExifInterface exifInterface = new ExifInterface(imagePath);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private Bitmap rotateImage(Bitmap bitmap, int degrees) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degrees);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
