@@ -1,8 +1,11 @@
 package com.example.agendapersonesjimenezeric;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -56,6 +59,14 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
         holder.txtTelefon.setText(contacte.getTelefon());
         holder.txtEmail.setText(contacte.getEmail());
 
+        if (contacte.getRutaFoto() != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(contacte.getRutaFoto());
+            holder.imageViewFoto.setImageBitmap(bitmap);
+        } else {
+            // Si no hay foto, puedes mostrar una imagen predeterminada o dejar el ImageView vacío
+            holder.imageViewFoto.setImageResource(R.drawable.ic_foto_default);
+        }
+
         if (posicioSeleccionada == position) {
             holder.itemView.setBackgroundResource(R.drawable.contacte_background_selected);
         } else {
@@ -72,12 +83,15 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
         TextView txtNom;
         TextView txtTelefon;
         TextView txtEmail;
+        ImageView imageViewFoto;
+
 
         ContacteViewHolder(@NonNull View itemView) {
             super(itemView);
             txtNom = itemView.findViewById(R.id.txt_nom);
             txtTelefon = itemView.findViewById(R.id.txt_telefon);
             txtEmail = itemView.findViewById(R.id.txt_email);
+            imageViewFoto = itemView.findViewById(R.id.imageViewFoto);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -92,5 +106,18 @@ public class ContacteAdapter extends RecyclerView.Adapter<ContacteAdapter.Contac
                 }
             });
         }
+
+        public void onBindViewHolder(@NonNull ContacteViewHolder holder, int position) {
+            Contacte contacte = llistaContactes.get(position);
+
+            if (contacte.getRutaFoto() != null) {
+                Bitmap bitmap = BitmapFactory.decodeFile(contacte.getRutaFoto());
+                holder.imageViewFoto.setImageBitmap(bitmap);
+            } else {
+                // Si no hay foto, puedes mostrar una imagen predeterminada o dejar el ImageView vacío
+                holder.imageViewFoto.setImageResource(R.drawable.ic_foto_default);
+            }
+        }
+
     }
 }

@@ -6,6 +6,8 @@ public class Contacte implements Serializable {
     private String nom;
     private String telefon;
     private String email;
+    private String rutaFoto;
+
 
     public Contacte(String nom, String telefon, String email) {
         this.nom = nom;
@@ -36,4 +38,12 @@ public class Contacte implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+    public String getRutaFoto() {
+        return rutaFoto;
+    }
+
+    public void setRutaFoto(String rutaFoto) {
+        this.rutaFoto = rutaFoto;
+    }
+
 }
